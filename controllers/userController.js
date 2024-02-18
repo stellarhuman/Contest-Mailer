@@ -1,6 +1,8 @@
 const mongoose = require('mongoose')
 const User = require('../database/userModel')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 async function loginController(req,res,next){
     try{
@@ -10,7 +12,8 @@ async function loginController(req,res,next){
         }
         const match = await bcrypt.compare(req.body.password,claimedUser.password)
         if(match){
-            res.send(`Welcome ${claimedUser.username}`)
+            const token =  await jwt.sign({username : claimedUser.username},process.env.JWT_SECRET)
+            res.status(200).json({accessToken : token})
         }
         else{
             res.send('Incorrect Password')
@@ -21,7 +24,6 @@ async function loginController(req,res,next){
         console.log(err)
     }
 }
-
 async function registerUserController(req,res,next){
     try{
         const existingUser = await User.findOne({'username' : req.body.username})
@@ -42,4 +44,8 @@ async function registerUserController(req,res,next){
     }
 }
 
-module.exports = {loginController,registerUserController}
+async function fetchUserdashboard(req,res,next){
+    res.send(`Hello ${req.body.username}`)
+}
+
+module.exports = {loginController,registerUserController,fetchUserdashboard}
