@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const User = require('../database/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
 require('dotenv').config()
 
 async function loginController(req,res,next){
@@ -33,19 +34,43 @@ async function registerUserController(req,res,next){
         const hashedPassword = await bcrypt.hash(req.body.password,10)
         const currUser = new User({
             username : req.body.username,
-            password : hashedPassword
+            password : hashedPassword,
+            email : req.body.email
         })
         await currUser.save()
         res.send(`You have been created ${req.body.username}!!`)
     }
     catch(err){
-        res.send('An error has occoured')
-        console.log(err)
+        if(err.name === 'ValidatorError'){
+            return res.status(403).send(err.message)
+        }
+        else{
+            res.send(err.message)
+        }
     }
 }
 
 async function fetchUserdashboard(req,res,next){
-    res.send(`Hello ${req.body.username}`)
+    try{
+    const currUser = await User.findOne({'username' : req.body.username})
+    res.status(200).send(currUser)
+    }
+    catch(err){
+        res.status(404).send(err.message)
+    }
 }
 
-module.exports = {loginController,registerUserController,fetchUserdashboard}
+async function updateUserData(req,res,next){
+    try{
+        const filter = {'username' : req.body.username}
+        await User.findOneAndUpdate(filter,req.body,{runValidators : true})
+        const newUser = await User.findOne(filter)
+        res.status(200).send(await User.findOne(filter))
+    }
+    catch(err){
+    console.log(err)
+    res.status(404).send(err.message)
+    }
+}
+
+module.exports = {loginController,registerUserController,fetchUserdashboard,updateUserData}

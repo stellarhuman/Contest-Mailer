@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken')
 async function authenticateToken(req,res,next){
     const authHeader = req.headers['authorization']
     if(!authHeader){
-        console.log('No authHeader')
         return res.status(403).send('No authHeader')
     }
     const token = authHeader.split(' ')[1];
@@ -15,12 +14,10 @@ async function authenticateToken(req,res,next){
     jwt.verify(token,process.env.JWT_SECRET,(err,decoded)=>{
         if(err){
             console.log(err);
-            return res.send(403).json({error : err})
+            return res.status(403).send('Wrong JWT')
         }
-        else{
-            req.body.username = decoded.username
-            next()
-        }
+        req.body.username = decoded.username
+        next()
     })
 }
 
