@@ -25,20 +25,21 @@ async function fetchTimeFromchef(){
     await browser.close()
     return contestTime
 }
-// async function codechefDataExtractor() {
-//     try {
-//         const contestNameAndRatedTill = await fetchDataFromChef()
-//         return contestNameAndRatedTill
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
-async function codechefTimeExtractor() {
+async function codechefDataExtractor() {
     try {
-        const contesttTime = await fetchTimeFromchef()
-        console.log(contesttTime)
+        const contestNameAndRatedTill = await fetchDataFromChef()
+        return contestNameAndRatedTill
     } catch (error) {
         console.log(error)
     }
 }
-codechefTimeExtractor()
+async function codechefTimeExtractor() {
+    try {
+        const contesttTime = await fetchTimeFromchef()
+        return contesttTime
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+module.exports = {codechefDataExtractor,codechefTimeExtractor}
