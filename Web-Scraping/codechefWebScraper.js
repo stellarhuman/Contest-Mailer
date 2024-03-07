@@ -41,5 +41,4 @@ async function codechefTimeExtractor() {
         console.log(error)
     }
 }
-
 module.exports = {codechefDataExtractor,codechefTimeExtractor}

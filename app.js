@@ -4,7 +4,7 @@ const app = express()
 app.use(express.json())
 const connectToDB = require('./database/connect')
 const userRouter = require('./routes/userRouter')
-const {mailAutomationCron} = require('./cronAndNodemailer/automation')
+const mailAutomationCron = require('./cronAndNodemailer/automation')
 app.use('/users',userRouter)
 const port = 3000
 async function startPortAndConnectToDB(){
@@ -15,8 +15,8 @@ async function startPortAndConnectToDB(){
         })
         cron.schedule('0 20 * * *',mailAutomationCron)
     }
-    catch{
-
+    catch(err){
+        console.log(err)
     }
 }
 
