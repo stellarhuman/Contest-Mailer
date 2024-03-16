@@ -2,11 +2,10 @@ const mongoose = require('mongoose')
 const Users = require('../database/userModel')
 const nodemailer = require('nodemailer')
 require('dotenv').config()
-const connectToDB = require('../database/connect')
 const transporter = nodemailer.createTransport({
     service : 'gmail',
     host : 'smtp.mail.com',
-    port : 465,
+    port : 587,
     secure : true,
     auth : {
         user : process.env.GOOGLE_SENDER_MAIL_ID,
@@ -16,7 +15,7 @@ const transporter = nodemailer.createTransport({
 async function realFunction(cfData,ccName,ccTime){
     const filter = {}
     ccName = JSON.stringify(ccName)
-    const users = await Users.find({})
+    const users = await Users.find(filter)
     for(let i = 0;i<users.length;i++){
         let message = []
         if(users[i].codechef === true){
